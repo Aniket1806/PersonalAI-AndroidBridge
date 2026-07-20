@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import com.personalai.bridge.actions.ActionEngine
 
 class BridgeAccessibilityService : AccessibilityService() {
 
@@ -29,6 +30,7 @@ class BridgeAccessibilityService : AccessibilityService() {
         if (root != null) {
             Log.d(TAG, "Current Screen: ${root.packageName}")
             scanNode(root)
+            ActionEngine.scan(root)
         }
     }
 
