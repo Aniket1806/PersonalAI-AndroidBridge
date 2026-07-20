@@ -3,6 +3,7 @@ package com.personalai.bridge.accessibility
 import android.accessibilityservice.AccessibilityService
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 
 class BridgeAccessibilityService : AccessibilityService() {
 
@@ -27,11 +28,26 @@ class BridgeAccessibilityService : AccessibilityService() {
 
         if (root != null) {
             Log.d(TAG, "Current Screen: ${root.packageName}")
+            scanNode(root)
+        }
+    }
 
-            val text = root.text
-            if (text != null) {
-                Log.d(TAG, "Root Text: $text")
-            }
+    private fun scanNode(node: AccessibilityNodeInfo?) {
+
+        if (node == null) return
+
+        val text = node.text?.toString() ?: ""
+        val desc = node.contentDescription?.toString() ?: ""
+
+        if (text.isNotEmpty() || desc.isNotEmpty()) {
+            Log.d(
+                TAG,
+                "Node -> Text: $text | Desc: $desc | Class: ${node.className}"
+            )
+        }
+
+        for (i in 0 until node.childCount) {
+            scanNode(node.getChild(i))
         }
     }
 
