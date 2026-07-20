@@ -22,6 +22,17 @@ class BridgeAccessibilityService : AccessibilityService() {
             TAG,
             "Package: $packageName | Class: $className | Event: $eventType"
         )
+
+        val root = rootInActiveWindow
+
+        if (root != null) {
+            Log.d(TAG, "Current Screen: ${root.packageName}")
+
+            val text = root.text
+            if (text != null) {
+                Log.d(TAG, "Root Text: $text")
+            }
+        }
     }
 
     override fun onInterrupt() {
