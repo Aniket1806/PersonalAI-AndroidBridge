@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Button
 import android.widget.TextView
 import com.personalai.bridge.service.BridgeService
@@ -16,6 +17,7 @@ class MainActivity : Activity() {
 
         val startBtn = findViewById<Button>(R.id.startBtn)
         val stopBtn = findViewById<Button>(R.id.stopBtn)
+        val accessibilityBtn = findViewById<Button>(R.id.accessibilityBtn)
         val statusText = findViewById<TextView>(R.id.statusText)
 
         startBtn.setOnClickListener {
@@ -33,6 +35,10 @@ class MainActivity : Activity() {
         stopBtn.setOnClickListener {
             stopService(Intent(this, BridgeService::class.java))
             statusText.text = "Status : Bridge Stopped"
+        }
+
+        accessibilityBtn.setOnClickListener {
+            startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
         }
     }
 }
