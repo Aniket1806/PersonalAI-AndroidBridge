@@ -14,19 +14,14 @@ object ScreenAnalyzer {
 
         val packageName = root.packageName?.toString() ?: "Unknown"
 
-        Log.d(TAG, "========== SCREEN ANALYSIS ==========")
+        Log.d(TAG, "========== SCREEN ANALYZER ==========")
         Log.d(TAG, "Package: $packageName")
 
         val screenInfo = StringBuilder()
 
         scan(root, screenInfo)
 
-        DecisionEngine.decide(
-            packageName,
-            screenInfo.toString()
-        )
-
-        Log.d(TAG, "====================================")
+        Log.d(TAG, "=====================================")
     }
 
     private fun scan(
@@ -49,6 +44,22 @@ object ScreenAnalyzer {
             Log.d(TAG, info)
 
             screenInfo.append(info).append("\n")
+
+            if (
+                text.equals("Allow", true) ||
+                text.equals("OK", true) ||
+                text.equals("Continue", true) ||
+                text.equals("Next", true) ||
+                text.equals("Accept", true) ||
+                text.equals("Yes", true)
+            ) {
+
+                DecisionEngine.decide(
+                    packageName = packageName,
+                    screenInfo = info,
+                    targetNode = node
+                )
+            }
         }
 
         for (i in 0 until node.childCount) {

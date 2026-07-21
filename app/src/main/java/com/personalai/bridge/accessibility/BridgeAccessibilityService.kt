@@ -4,7 +4,6 @@ import android.accessibilityservice.AccessibilityService
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import com.personalai.bridge.actions.ActionEngine
 import com.personalai.bridge.ai.ScreenAnalyzer
 
 class BridgeAccessibilityService : AccessibilityService() {
@@ -34,8 +33,6 @@ class BridgeAccessibilityService : AccessibilityService() {
             scanNode(root)
 
             ScreenAnalyzer.analyze(root)
-
-            ActionEngine.scan(root)
         }
     }
 

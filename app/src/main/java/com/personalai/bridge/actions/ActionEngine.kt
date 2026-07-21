@@ -17,6 +17,7 @@ object ActionEngine {
     )
 
     fun scan(node: AccessibilityNodeInfo?) {
+
         if (node == null) return
 
         val text = node.text?.toString() ?: ""
@@ -27,7 +28,7 @@ object ActionEngine {
 
         Log.d(
             TAG,
-            "Node -> Text: $text | Desc: $desc | ID: $id | Class: $className | Package: $packageName | Clickable: ${node.isClickable} | Enabled: ${node.isEnabled}"
+            "Node -> Text: $text | Desc: $desc | ID: $id | Class: $className | Package: $packageName"
         )
 
         for (target in targetButtons) {
@@ -35,18 +36,49 @@ object ActionEngine {
                 text.equals(target, ignoreCase = true) ||
                 desc.equals(target, ignoreCase = true)
             ) {
-
-                Log.d(TAG, "Target Button Found: $target")
-
-                if (node.isClickable && node.isEnabled) {
-                    node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                    Log.d(TAG, "Clicked: $target")
-                }
+                execute("CLICK", node, target)
             }
         }
 
         for (i in 0 until node.childCount) {
             scan(node.getChild(i))
+        }
+    }
+
+    fun execute(
+        action: String,
+        node: AccessibilityNodeInfo?,
+        target: String = ""
+    ) {
+
+        if (node == null) return
+
+        when (action) {
+
+            "CLICK" -> {
+
+                var clicked = false
+
+                if (node.isClickable && node.isEnabled) {
+                    clicked = node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                }
+
+                if (!clicked) {
+                    val parent = node.parent
+                    if (parent != null && parent.isClickable) {
+                        clicked = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    }
+                }
+
+                Log.d(
+                    TAG,
+                    "Click [$target] Result = $clicked"
+                )
+            }
+
+            else -> {
+                Log.d(TAG, "Unknown Action: $action")
+            }
         }
     }
 }
