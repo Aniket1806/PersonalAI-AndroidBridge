@@ -27,7 +27,13 @@ object ActionEngine {
                 text.equals(target, ignoreCase = true) ||
                 desc.equals(target, ignoreCase = true)
             ) {
+
                 Log.d(TAG, "Target Button Found: $target")
+
+                if (node.isClickable) {
+                    node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    Log.d(TAG, "Clicked: $target")
+                }
             }
         }
 
