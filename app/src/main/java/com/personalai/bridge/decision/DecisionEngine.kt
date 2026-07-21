@@ -3,7 +3,7 @@ package com.personalai.bridge.decision
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.personalai.bridge.actions.ActionEngine
-import com.personalai.bridge.ai.AIMemory
+import com.personalai.bridge.memory.Memory
 
 object DecisionEngine {
 
@@ -20,7 +20,7 @@ object DecisionEngine {
         Log.d(TAG, "Screen Info: $screenInfo")
 
         // Check memory first
-        val previousAction = AIMemory.recall(screenInfo)
+        val previousAction = Memory.recall(screenInfo)
 
         if (previousAction != null) {
             Log.d(TAG, "Memory Found: $previousAction")
@@ -32,37 +32,37 @@ object DecisionEngine {
 
             screenInfo.contains("Allow", true) -> {
                 Log.d(TAG, "Decision: Click Allow")
-                AIMemory.remember(screenInfo, "CLICK")
+                Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Allow")
             }
 
             screenInfo.contains("Continue", true) -> {
                 Log.d(TAG, "Decision: Click Continue")
-                AIMemory.remember(screenInfo, "CLICK")
+                Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Continue")
             }
 
             screenInfo.contains("OK", true) -> {
                 Log.d(TAG, "Decision: Click OK")
-                AIMemory.remember(screenInfo, "CLICK")
+                Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "OK")
             }
 
             screenInfo.contains("Next", true) -> {
                 Log.d(TAG, "Decision: Click Next")
-                AIMemory.remember(screenInfo, "CLICK")
+                Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Next")
             }
 
             screenInfo.contains("Accept", true) -> {
                 Log.d(TAG, "Decision: Click Accept")
-                AIMemory.remember(screenInfo, "CLICK")
+                Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Accept")
             }
 
             screenInfo.contains("Yes", true) -> {
                 Log.d(TAG, "Decision: Click Yes")
-                AIMemory.remember(screenInfo, "CLICK")
+                Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Yes")
             }
 
