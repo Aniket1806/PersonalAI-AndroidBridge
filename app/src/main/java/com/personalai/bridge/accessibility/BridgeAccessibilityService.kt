@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.personalai.bridge.ai.ScreenAnalyzer
+import com.personalai.bridge.decision.DecisionEngine
 
 class BridgeAccessibilityService : AccessibilityService() {
 
@@ -33,6 +34,12 @@ class BridgeAccessibilityService : AccessibilityService() {
             scanNode(root)
 
             ScreenAnalyzer.analyze(root)
+
+            DecisionEngine.decide(
+                packageName = root.packageName?.toString() ?: "Unknown",
+                screenInfo = "Accessibility Event",
+                targetNode = root
+            )
         }
     }
 
