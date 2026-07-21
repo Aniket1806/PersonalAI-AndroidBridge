@@ -1,8 +1,8 @@
-package com.personalai.bridge.ai
+package com.personalai.bridge.memory
 
 import android.util.Log
 
-object AIMemory {
+object Memory {
 
     private const val TAG = "PersonalAIBridge"
 
