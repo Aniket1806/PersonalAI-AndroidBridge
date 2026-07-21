@@ -21,6 +21,14 @@ object ActionEngine {
 
         val text = node.text?.toString() ?: ""
         val desc = node.contentDescription?.toString() ?: ""
+        val id = node.viewIdResourceName ?: "No ID"
+        val className = node.className?.toString() ?: "Unknown"
+        val packageName = node.packageName?.toString() ?: "Unknown"
+
+        Log.d(
+            TAG,
+            "Node -> Text: $text | Desc: $desc | ID: $id | Class: $className | Package: $packageName | Clickable: ${node.isClickable} | Enabled: ${node.isEnabled}"
+        )
 
         for (target in targetButtons) {
             if (
@@ -30,7 +38,7 @@ object ActionEngine {
 
                 Log.d(TAG, "Target Button Found: $target")
 
-                if (node.isClickable) {
+                if (node.isClickable && node.isEnabled) {
                     node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     Log.d(TAG, "Clicked: $target")
                 }
