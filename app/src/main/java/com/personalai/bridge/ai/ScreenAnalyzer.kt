@@ -19,14 +19,15 @@ object ScreenAnalyzer {
 
         val screenInfo = StringBuilder()
 
-        scan(root, screenInfo)
+        scan(root, screenInfo, packageName)
 
         Log.d(TAG, "=====================================")
     }
 
     private fun scan(
         node: AccessibilityNodeInfo?,
-        screenInfo: StringBuilder
+        screenInfo: StringBuilder,
+        packageName: String
     ) {
 
         if (node == null) return
@@ -63,7 +64,11 @@ object ScreenAnalyzer {
         }
 
         for (i in 0 until node.childCount) {
-            scan(node.getChild(i), screenInfo)
+            scan(
+                node.getChild(i),
+                screenInfo,
+                packageName
+            )
         }
     }
 }
