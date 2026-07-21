@@ -17,57 +17,58 @@ object DecisionEngine {
 
         Log.d(TAG, "===== DECISION ENGINE =====")
         Log.d(TAG, "Package: $packageName")
-        Log.d(TAG, "Screen Info: $screenInfo")
+        Log.d(TAG, "Screen: $screenInfo")
 
-        // Check memory first
         val previousAction = Memory.recall(screenInfo)
 
         if (previousAction != null) {
-            Log.d(TAG, "Memory Found: $previousAction")
+            Log.d(TAG, "Memory Hit -> $previousAction")
             ActionEngine.execute(previousAction, targetNode, previousAction)
             return
         }
 
         when {
 
-            screenInfo.contains("Allow", true) -> {
-                Log.d(TAG, "Decision: Click Allow")
+            packageName.contains("permissioncontroller", true)
+                    && screenInfo.contains("Allow", true) -> {
+
                 Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Allow")
             }
 
-            screenInfo.contains("Continue", true) -> {
-                Log.d(TAG, "Decision: Click Continue")
+            packageName.contains("packageinstaller", true)
+                    && screenInfo.contains("Continue", true) -> {
+
                 Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Continue")
             }
 
-            screenInfo.contains("OK", true) -> {
-                Log.d(TAG, "Decision: Click OK")
+            packageName.contains("settings", true)
+                    && (screenInfo.contains("Allow", true)
+                    || screenInfo.contains("Enable", true)
+                    || screenInfo.contains("OK", true)) -> {
+
                 Memory.remember(screenInfo, "CLICK")
-                ActionEngine.execute("CLICK", targetNode, "OK")
+                ActionEngine.execute("CLICK", targetNode, "Settings")
             }
 
             screenInfo.contains("Next", true) -> {
-                Log.d(TAG, "Decision: Click Next")
                 Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Next")
             }
 
             screenInfo.contains("Accept", true) -> {
-                Log.d(TAG, "Decision: Click Accept")
                 Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Accept")
             }
 
             screenInfo.contains("Yes", true) -> {
-                Log.d(TAG, "Decision: Click Yes")
                 Memory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Yes")
             }
 
             else -> {
-                Log.d(TAG, "Decision: No Action")
+                Log.d(TAG, "No decision for package: $packageName")
             }
         }
 
