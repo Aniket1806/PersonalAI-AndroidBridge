@@ -3,7 +3,7 @@ package com.personalai.bridge.decision
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.personalai.bridge.actions.ActionEngine
-import com.personalai.bridge.memory.Memory
+import com.personalai.bridge.ai.AIMemory
 
 object DecisionEngine {
 
@@ -17,58 +17,49 @@ object DecisionEngine {
 
         Log.d(TAG, "===== DECISION ENGINE =====")
         Log.d(TAG, "Package: $packageName")
-        Log.d(TAG, "Screen: $screenInfo")
+        Log.d(TAG, "Screen Info: $screenInfo")
 
-        val previousAction = Memory.recall(screenInfo)
+        val previousAction = AIMemory.recall(screenInfo)
 
         if (previousAction != null) {
-            Log.d(TAG, "Memory Hit -> $previousAction")
+            Log.d(TAG, "Memory Found: $previousAction")
             ActionEngine.execute(previousAction, targetNode, previousAction)
             return
         }
 
         when {
-
-            packageName.contains("permissioncontroller", true)
-                    && screenInfo.contains("Allow", true) -> {
-
-                Memory.remember(screenInfo, "CLICK")
+            screenInfo.contains("Allow", true) -> {
+                AIMemory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Allow")
             }
 
-            packageName.contains("packageinstaller", true)
-                    && screenInfo.contains("Continue", true) -> {
-
-                Memory.remember(screenInfo, "CLICK")
+            screenInfo.contains("Continue", true) -> {
+                AIMemory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Continue")
             }
 
-            packageName.contains("settings", true)
-                    && (screenInfo.contains("Allow", true)
-                    || screenInfo.contains("Enable", true)
-                    || screenInfo.contains("OK", true)) -> {
-
-                Memory.remember(screenInfo, "CLICK")
-                ActionEngine.execute("CLICK", targetNode, "Settings")
+            screenInfo.contains("OK", true) -> {
+                AIMemory.remember(screenInfo, "CLICK")
+                ActionEngine.execute("CLICK", targetNode, "OK")
             }
 
             screenInfo.contains("Next", true) -> {
-                Memory.remember(screenInfo, "CLICK")
+                AIMemory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Next")
             }
 
             screenInfo.contains("Accept", true) -> {
-                Memory.remember(screenInfo, "CLICK")
+                AIMemory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Accept")
             }
 
             screenInfo.contains("Yes", true) -> {
-                Memory.remember(screenInfo, "CLICK")
+                AIMemory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Yes")
             }
 
             else -> {
-                Log.d(TAG, "No decision for package: $packageName")
+                Log.d(TAG, "Decision: No Action")
             }
         }
 
