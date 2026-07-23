@@ -1,5 +1,6 @@
 package com.personalai.bridge.actions
 
+import android.accessibilityservice.AccessibilityService
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 
@@ -33,8 +34,8 @@ object ActionEngine {
 
         for (target in targetButtons) {
             if (
-                text.equals(target, ignoreCase = true) ||
-                desc.equals(target, ignoreCase = true)
+                text.equals(target, true) ||
+                desc.equals(target, true)
             ) {
                 execute("CLICK", node, target)
             }
@@ -51,29 +52,71 @@ object ActionEngine {
         target: String = ""
     ) {
 
-        if (node == null) return
-
         when (action) {
 
             "CLICK" -> {
 
+                if (node == null) return
+
                 var clicked = false
 
                 if (node.isClickable && node.isEnabled) {
-                    clicked = node.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    clicked = node.performAction(
+                        AccessibilityNodeInfo.ACTION_CLICK
+                    )
                 }
 
                 if (!clicked) {
                     val parent = node.parent
                     if (parent != null && parent.isClickable) {
-                        clicked = parent.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                        clicked = parent.performAction(
+                            AccessibilityNodeInfo.ACTION_CLICK
+                        )
                     }
                 }
 
-                Log.d(
-                    TAG,
-                    "Click [$target] Result = $clicked"
+                Log.d(TAG, "CLICK [$target] -> $clicked")
+            }
+
+            "LONG_CLICK" -> {
+
+                if (node == null) return
+
+                val result = node.performAction(
+                    AccessibilityNodeInfo.ACTION_LONG_CLICK
                 )
+
+                Log.d(TAG, "LONG_CLICK [$target] -> $result")
+            }
+
+            "SCROLL_FORWARD" -> {
+
+                if (node == null) return
+
+                val result = node.performAction(
+                    AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
+                )
+
+                Log.d(TAG, "SCROLL_FORWARD -> $result")
+            }
+
+            "SCROLL_BACKWARD" -> {
+
+                if (node == null) return
+
+                val result = node.performAction(
+                    AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD
+                )
+
+                Log.d(TAG, "SCROLL_BACKWARD -> $result")
+            }
+
+            "BACK" -> {
+                Log.d(TAG, "BACK action requested")
+            }
+
+            "HOME" -> {
+                Log.d(TAG, "HOME action requested")
             }
 
             else -> {
