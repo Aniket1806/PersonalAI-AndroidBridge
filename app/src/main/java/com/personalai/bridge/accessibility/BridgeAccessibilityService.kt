@@ -10,7 +10,29 @@ import com.personalai.bridge.decision.DecisionEngine
 class BridgeAccessibilityService : AccessibilityService() {
 
     companion object {
+
         private const val TAG = "PersonalAIBridge"
+
+        var instance: BridgeAccessibilityService? = null
+            private set
+
+        fun globalBack(): Boolean {
+            return instance?.performGlobalAction(
+                AccessibilityService.GLOBAL_ACTION_BACK
+            ) ?: false
+        }
+
+        fun globalHome(): Boolean {
+            return instance?.performGlobalAction(
+                AccessibilityService.GLOBAL_ACTION_HOME
+            ) ?: false
+        }
+    }
+
+    override fun onServiceConnected() {
+        super.onServiceConnected()
+        instance = this
+        Log.d(TAG, "Accessibility Service Connected")
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
@@ -26,21 +48,17 @@ class BridgeAccessibilityService : AccessibilityService() {
             "Package: $packageName | Class: $className | Event: $eventType"
         )
 
-        val root = rootInActiveWindow
+        val root = rootInActiveWindow ?: return
 
-        if (root != null) {
-            Log.d(TAG, "Current Screen: ${root.packageName}")
+        scanNode(root)
 
-            scanNode(root)
+        ScreenAnalyzer.analyze(root)
 
-            ScreenAnalyzer.analyze(root)
-
-            DecisionEngine.decide(
-                packageName = root.packageName?.toString() ?: "Unknown",
-                screenInfo = "Accessibility Event",
-                targetNode = root
-            )
-        }
+        DecisionEngine.decide(
+            packageName = packageName,
+            screenInfo = "Accessibility Event",
+            targetNode = root
+        )
     }
 
     private fun scanNode(node: AccessibilityNodeInfo?) {
@@ -53,7 +71,7 @@ class BridgeAccessibilityService : AccessibilityService() {
         if (text.isNotEmpty() || desc.isNotEmpty()) {
             Log.d(
                 TAG,
-                "Node -> Text: $text | Desc: $desc | Class: ${node.className}"
+                "Node -> Text: $text | Desc: $desc"
             )
         }
 
@@ -66,8 +84,8 @@ class BridgeAccessibilityService : AccessibilityService() {
         Log.d(TAG, "Accessibility Service Interrupted")
     }
 
-    override fun onServiceConnected() {
-        super.onServiceConnected()
-        Log.d(TAG, "Accessibility Service Connected")
+    override fun onDestroy() {
+        super.onDestroy()
+        instance = null
     }
 }
