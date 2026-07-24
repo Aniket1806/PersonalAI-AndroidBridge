@@ -1,8 +1,9 @@
 package com.personalai.bridge.actions
 
-import android.accessibilityservice.AccessibilityService
+import android.os.Bundle
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import com.personalai.bridge.accessibility.BridgeAccessibilityService
 
 object ActionEngine {
 
@@ -75,7 +76,7 @@ object ActionEngine {
                     }
                 }
 
-                Log.d(TAG, "CLICK [$target] -> $clicked")
+                Log.d(TAG, "CLICK [$target] = $clicked")
             }
 
             "LONG_CLICK" -> {
@@ -86,7 +87,25 @@ object ActionEngine {
                     AccessibilityNodeInfo.ACTION_LONG_CLICK
                 )
 
-                Log.d(TAG, "LONG_CLICK [$target] -> $result")
+                Log.d(TAG, "LONG_CLICK [$target] = $result")
+            }
+
+            "SET_TEXT" -> {
+
+                if (node == null) return
+
+                val args = Bundle()
+                args.putCharSequence(
+                    AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE,
+                    target
+                )
+
+                val result = node.performAction(
+                    AccessibilityNodeInfo.ACTION_SET_TEXT,
+                    args
+                )
+
+                Log.d(TAG, "SET_TEXT [$target] = $result")
             }
 
             "SCROLL_FORWARD" -> {
@@ -97,7 +116,7 @@ object ActionEngine {
                     AccessibilityNodeInfo.ACTION_SCROLL_FORWARD
                 )
 
-                Log.d(TAG, "SCROLL_FORWARD -> $result")
+                Log.d(TAG, "SCROLL_FORWARD = $result")
             }
 
             "SCROLL_BACKWARD" -> {
@@ -108,15 +127,17 @@ object ActionEngine {
                     AccessibilityNodeInfo.ACTION_SCROLL_BACKWARD
                 )
 
-                Log.d(TAG, "SCROLL_BACKWARD -> $result")
+                Log.d(TAG, "SCROLL_BACKWARD = $result")
             }
 
             "BACK" -> {
-                Log.d(TAG, "BACK action requested")
+                val result = BridgeAccessibilityService.globalBack()
+                Log.d(TAG, "BACK = $result")
             }
 
             "HOME" -> {
-                Log.d(TAG, "HOME action requested")
+                val result = BridgeAccessibilityService.globalHome()
+                Log.d(TAG, "HOME = $result")
             }
 
             else -> {

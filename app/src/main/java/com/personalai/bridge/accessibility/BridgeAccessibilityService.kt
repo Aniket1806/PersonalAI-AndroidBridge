@@ -81,6 +81,7 @@ class BridgeAccessibilityService : AccessibilityService() {
     }
 
     override fun onInterrupt() {
+        instance = null
         Log.d(TAG, "Accessibility Service Interrupted")
     }
 
