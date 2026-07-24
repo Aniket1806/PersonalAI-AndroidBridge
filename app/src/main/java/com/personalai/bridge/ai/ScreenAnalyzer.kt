@@ -1,6 +1,7 @@
 package com.personalai.bridge.ai
 
 import android.util.Log
+import android.widget.EditText
 import android.view.accessibility.AccessibilityNodeInfo
 import com.personalai.bridge.decision.DecisionEngine
 
@@ -34,33 +35,50 @@ object ScreenAnalyzer {
 
         val text = node.text?.toString() ?: ""
         val desc = node.contentDescription?.toString() ?: ""
+        val hint = node.hintText?.toString() ?: ""
         val id = node.viewIdResourceName ?: "No ID"
         val className = node.className?.toString() ?: "Unknown"
 
-        if (text.isNotEmpty() || desc.isNotEmpty()) {
+        val info =
+            "Text: $text | Hint: $hint | Desc: $desc | ID: $id | Class: $className"
 
-            val info =
-                "Text: $text | Desc: $desc | ID: $id | Class: $className"
+        if (
+            text.isNotEmpty() ||
+            desc.isNotEmpty() ||
+            hint.isNotEmpty()
+        ) {
+            Log.d(TAG, info)
+            screenInfo.append(info).append("\n")
+        }
 
+        // Detect editable text fields
+        if (
+            className.contains("EditText", true) ||
+            node.isEditable
+        ) {
+
+            Log.d(TAG, "Editable Field Found")
             Log.d(TAG, info)
 
-            screenInfo.append(info).append("\n")
+            // Future AI typing will happen here
+            // ActionEngine.execute("SET_TEXT", node, "Hello")
+        }
 
-            if (
-                text.equals("Allow", true) ||
-                text.equals("OK", true) ||
-                text.equals("Continue", true) ||
-                text.equals("Next", true) ||
-                text.equals("Accept", true) ||
-                text.equals("Yes", true)
-            ) {
+        // Detect common buttons
+        if (
+            text.equals("Allow", true) ||
+            text.equals("OK", true) ||
+            text.equals("Continue", true) ||
+            text.equals("Next", true) ||
+            text.equals("Accept", true) ||
+            text.equals("Yes", true)
+        ) {
 
-                DecisionEngine.decide(
-                    packageName = packageName,
-                    screenInfo = info,
-                    targetNode = node
-                )
-            }
+            DecisionEngine.decide(
+                packageName = packageName,
+                screenInfo = info,
+                targetNode = node
+            )
         }
 
         for (i in 0 until node.childCount) {
