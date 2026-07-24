@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.personalai.bridge.actions.ActionEngine
 import com.personalai.bridge.ai.AIMemory
+import com.personalai.bridge.ai.TextGenerator
 
 object DecisionEngine {
 
@@ -30,18 +31,25 @@ object DecisionEngine {
         // Editable text field
         if (
             targetNode != null &&
-            (targetNode.isEditable ||
-             targetNode.className?.toString()?.contains("EditText", true) == true)
+            (
+                targetNode.isEditable ||
+                targetNode.className?.toString()?.contains("EditText", true) == true
+            )
         ) {
 
             Log.d(TAG, "Decision: SET_TEXT")
+
+            val reply = TextGenerator.generateReply(
+                packageName,
+                screenInfo
+            )
 
             AIMemory.remember(screenInfo, "SET_TEXT")
 
             ActionEngine.execute(
                 "SET_TEXT",
                 targetNode,
-                "Hello"
+                reply
             )
 
             return
