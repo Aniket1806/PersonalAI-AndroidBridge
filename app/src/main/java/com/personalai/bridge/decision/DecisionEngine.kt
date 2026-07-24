@@ -23,11 +23,32 @@ object DecisionEngine {
 
         if (previousAction != null) {
             Log.d(TAG, "Memory Found: $previousAction")
-            ActionEngine.execute(previousAction, targetNode, previousAction)
+            ActionEngine.execute(previousAction, targetNode)
+            return
+        }
+
+        // Editable text field
+        if (
+            targetNode != null &&
+            (targetNode.isEditable ||
+             targetNode.className?.toString()?.contains("EditText", true) == true)
+        ) {
+
+            Log.d(TAG, "Decision: SET_TEXT")
+
+            AIMemory.remember(screenInfo, "SET_TEXT")
+
+            ActionEngine.execute(
+                "SET_TEXT",
+                targetNode,
+                "Hello"
+            )
+
             return
         }
 
         when {
+
             screenInfo.contains("Allow", true) -> {
                 AIMemory.remember(screenInfo, "CLICK")
                 ActionEngine.execute("CLICK", targetNode, "Allow")
