@@ -1,7 +1,6 @@
 package com.personalai.bridge.ai
 
 import android.util.Log
-import android.widget.EditText
 import android.view.accessibility.AccessibilityNodeInfo
 import com.personalai.bridge.decision.DecisionEngine
 
@@ -13,7 +12,7 @@ object ScreenAnalyzer {
 
         if (root == null) return
 
-        val packageName = root.packageName?.toString() ?: "Unknown"
+        val packageName = root.packageName?.toString() ?: ""
 
         Log.d(TAG, "========== SCREEN ANALYZER ==========")
         Log.d(TAG, "Package: $packageName")
@@ -36,11 +35,11 @@ object ScreenAnalyzer {
         val text = node.text?.toString() ?: ""
         val desc = node.contentDescription?.toString() ?: ""
         val hint = node.hintText?.toString() ?: ""
-        val id = node.viewIdResourceName ?: "No ID"
-        val className = node.className?.toString() ?: "Unknown"
+        val id = node.viewIdResourceName ?: ""
+        val className = node.className?.toString() ?: ""
 
         val info =
-            "Text: $text | Hint: $hint | Desc: $desc | ID: $id | Class: $className"
+            "Text: $text | Hint: $hint | Desc: $desc | Id: $id | Class: $className"
 
         if (
             text.isNotEmpty() ||
@@ -60,8 +59,11 @@ object ScreenAnalyzer {
             Log.d(TAG, "Editable Field Found")
             Log.d(TAG, info)
 
-            // Future AI typing will happen here
-            // ActionEngine.execute("SET_TEXT", node, "Hello")
+            DecisionEngine.decide(
+                packageName = packageName,
+                screenInfo = info,
+                targetNode = node
+            )
         }
 
         // Detect common buttons
