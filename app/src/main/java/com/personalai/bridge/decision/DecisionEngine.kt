@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import com.personalai.bridge.actions.ActionEngine
 import com.personalai.bridge.ai.AIMemory
+import com.personalai.bridge.ai.TaskEngine
 import com.personalai.bridge.ai.TextGenerator
 
 object DecisionEngine {
@@ -20,6 +21,42 @@ object DecisionEngine {
         Log.d(TAG, "Package: $packageName")
         Log.d(TAG, "Screen Info: $screenInfo")
 
+        // Continue current task if one exists
+        if (TaskEngine.hasGoal()) {
+
+            val step = TaskEngine.getCurrentStep()
+
+            if (step != null) {
+
+                Log.d(TAG, "Current Task Step: $step")
+
+                when (step) {
+
+                    "CLICK" -> ActionEngine.execute("CLICK", targetNode)
+
+                    "TYPE" -> {
+                        val reply = TextGenerator.generate(
+                            packageName,
+                            screenInfo
+                        )
+
+                        ActionEngine.execute(
+                            "SET_TEXT",
+                            targetNode,
+                            reply
+                        )
+                    }
+
+                    "BACK" -> ActionEngine.execute("BACK", null)
+
+                    "HOME" -> ActionEngine.execute("HOME", null)
+                }
+
+                TaskEngine.completeStep()
+                return
+            }
+        }
+
         val previousAction = AIMemory.recall(screenInfo)
 
         if (previousAction != null) {
@@ -28,23 +65,28 @@ object DecisionEngine {
             return
         }
 
-        // Editable text field
+        // Editable field
         if (
             targetNode != null &&
             (
                 targetNode.isEditable ||
-                targetNode.className?.toString()?.contains("EditText", true) == true
+                targetNode.className?.toString()?.contains("EditText") == true
             )
         ) {
 
-            Log.d(TAG, "Decision: SET_TEXT")
+            Log.d(TAG, "Decision: TYPE")
 
-            val reply = TextGenerator.generateReply(
+            val reply = TextGenerator.generate(
                 packageName,
                 screenInfo
             )
 
             AIMemory.remember(screenInfo, "SET_TEXT")
+
+            TaskEngine.startGoal(
+                "Fill Text",
+                listOf("TYPE")
+            )
 
             ActionEngine.execute(
                 "SET_TEXT",
@@ -52,39 +94,29 @@ object DecisionEngine {
                 reply
             )
 
+            TaskEngine.completeStep()
             return
         }
 
         when {
 
-            screenInfo.contains("Allow", true) -> {
-                AIMemory.remember(screenInfo, "CLICK")
-                ActionEngine.execute("CLICK", targetNode, "Allow")
-            }
-
-            screenInfo.contains("Continue", true) -> {
-                AIMemory.remember(screenInfo, "CLICK")
-                ActionEngine.execute("CLICK", targetNode, "Continue")
-            }
-
-            screenInfo.contains("OK", true) -> {
-                AIMemory.remember(screenInfo, "CLICK")
-                ActionEngine.execute("CLICK", targetNode, "OK")
-            }
-
-            screenInfo.contains("Next", true) -> {
-                AIMemory.remember(screenInfo, "CLICK")
-                ActionEngine.execute("CLICK", targetNode, "Next")
-            }
-
-            screenInfo.contains("Accept", true) -> {
-                AIMemory.remember(screenInfo, "CLICK")
-                ActionEngine.execute("CLICK", targetNode, "Accept")
-            }
-
+            screenInfo.contains("Allow", true),
+            screenInfo.contains("Continue", true),
+            screenInfo.contains("OK", true),
+            screenInfo.contains("Next", true),
+            screenInfo.contains("Accept", true),
             screenInfo.contains("Yes", true) -> {
+
                 AIMemory.remember(screenInfo, "CLICK")
-                ActionEngine.execute("CLICK", targetNode, "Yes")
+
+                TaskEngine.startGoal(
+                    "Press Button",
+                    listOf("CLICK")
+                )
+
+                ActionEngine.execute("CLICK", targetNode)
+
+                TaskEngine.completeStep()
             }
 
             else -> {
