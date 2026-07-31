@@ -21,7 +21,6 @@ object DecisionEngine {
         Log.d(TAG, "Package: $packageName")
         Log.d(TAG, "Screen Info: $screenInfo")
 
-        // Continue current task if one exists
         if (TaskEngine.hasGoal()) {
 
             val step = TaskEngine.getCurrentStep()
@@ -32,13 +31,19 @@ object DecisionEngine {
 
                 when (step) {
 
-                    "CLICK" -> ActionEngine.execute("CLICK", targetNode)
+                    "CLICK" -> {
+                        ActionEngine.execute(
+                            "CLICK",
+                            targetNode
+                        )
+                    }
 
                     "TYPE" -> {
-                        val reply = TextGenerator.generate(
-                            packageName,
-                            screenInfo
-                        )
+                        val reply =
+                            TextGenerator.generateReply(
+                                packageName,
+                                screenInfo
+                            )
 
                         ActionEngine.execute(
                             "SET_TEXT",
@@ -47,9 +52,19 @@ object DecisionEngine {
                         )
                     }
 
-                    "BACK" -> ActionEngine.execute("BACK", null)
+                    "BACK" -> {
+                        ActionEngine.execute(
+                            "BACK",
+                            targetNode
+                        )
+                    }
 
-                    "HOME" -> ActionEngine.execute("HOME", null)
+                    "HOME" -> {
+                        ActionEngine.execute(
+                            "HOME",
+                            targetNode
+                        )
+                    }
                 }
 
                 TaskEngine.completeStep()
@@ -57,31 +72,49 @@ object DecisionEngine {
             }
         }
 
-        val previousAction = AIMemory.recall(screenInfo)
+        val previousAction =
+            AIMemory.recall(screenInfo)
 
         if (previousAction != null) {
-            Log.d(TAG, "Memory Found: $previousAction")
-            ActionEngine.execute(previousAction, targetNode)
+
+            Log.d(
+                TAG,
+                "Memory Found: $previousAction"
+            )
+
+            ActionEngine.execute(
+                previousAction,
+                targetNode
+            )
+
             return
         }
 
-        // Editable field
         if (
             targetNode != null &&
             (
                 targetNode.isEditable ||
-                targetNode.className?.toString()?.contains("EditText") == true
+                targetNode.className
+                    ?.toString()
+                    ?.contains(
+                        "EditText",
+                        ignoreCase = true
+                    ) == true
             )
         ) {
 
             Log.d(TAG, "Decision: TYPE")
 
-            val reply = TextGenerator.generate(
-                packageName,
-                screenInfo
-            )
+            val reply =
+                TextGenerator.generateReply(
+                    packageName,
+                    screenInfo
+                )
 
-            AIMemory.remember(screenInfo, "SET_TEXT")
+            AIMemory.remember(
+                screenInfo,
+                "SET_TEXT"
+            )
 
             TaskEngine.startGoal(
                 "Fill Text",
@@ -100,30 +133,60 @@ object DecisionEngine {
 
         when {
 
-            screenInfo.contains("Allow", true),
-            screenInfo.contains("Continue", true),
-            screenInfo.contains("OK", true),
-            screenInfo.contains("Next", true),
-            screenInfo.contains("Accept", true),
-            screenInfo.contains("Yes", true) -> {
+            screenInfo.contains(
+                "Allow",
+                ignoreCase = true
+            ) ||
+            screenInfo.contains(
+                "Continue",
+                ignoreCase = true
+            ) ||
+            screenInfo.contains(
+                "OK",
+                ignoreCase = true
+            ) ||
+            screenInfo.contains(
+                "Next",
+                ignoreCase = true
+            ) ||
+            screenInfo.contains(
+                "Accept",
+                ignoreCase = true
+            ) ||
+            screenInfo.contains(
+                "Yes",
+                ignoreCase = true
+            ) -> {
 
-                AIMemory.remember(screenInfo, "CLICK")
+                AIMemory.remember(
+                    screenInfo,
+                    "CLICK"
+                )
 
                 TaskEngine.startGoal(
                     "Press Button",
                     listOf("CLICK")
                 )
 
-                ActionEngine.execute("CLICK", targetNode)
+                ActionEngine.execute(
+                    "CLICK",
+                    targetNode
+                )
 
                 TaskEngine.completeStep()
             }
 
             else -> {
-                Log.d(TAG, "Decision: No Action")
+                Log.d(
+                    TAG,
+                    "Decision: No Action"
+                )
             }
         }
 
-        Log.d(TAG, "==========================")
+        Log.d(
+            TAG,
+            "==========================="
+        )
     }
 }
