@@ -1,83 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="PersonalAI"
-        android:textSize="28sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/statusText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:text="Status : Offline"
-        android:textSize="16sp" />
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="12dp"
-        android:fillViewport="true">
-
-        <TextView
-            android:id="@+id/chatText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="PersonalAI: Hello! Main ready hoon."
-            android:textSize="18sp"
-            android:padding="12dp" />
-
-    </ScrollView>
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PersonalAI Bridge"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="20dp"/>
+
+        <Button
+            android:id="@+id/startBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Start Bridge"/>
+
+        <Button
+            android:id="@+id/stopBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stop Bridge"
+            android:layout_marginTop="10dp"/>
+
+        <Button
+            android:id="@+id/accessibilityBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Enable Accessibility"
+            android:layout_marginTop="10dp"/>
+
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Status : Bridge Stopped"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chat"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp"/>
+
+        <TextView
+            android:id="@+id/chatText"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:padding="12dp"
+            android:text="PersonalAI: Hi! Main ready hoon."
+            android:textSize="16sp"/>
 
         <EditText
             android:id="@+id/messageInput"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="Message likho..."
-            android:inputType="textMultiLine"
-            android:maxLines="3" />
+            android:hint="Type a message"
+            android:inputType="text"
+            android:layout_marginTop="12dp"/>
 
         <Button
             android:id="@+id/sendBtn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Send" />
+            android:text="Send"
+            android:layout_marginTop="8dp"/>
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/startBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="Start Bridge" />
-
-    <Button
-        android:id="@+id/stopBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Stop Bridge" />
-
-    <Button
-        android:id="@+id/accessibilityBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Enable Accessibility" />
-
-</LinearLayout>
+</ScrollView>
