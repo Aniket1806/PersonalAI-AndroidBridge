@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import com.personalai.bridge.ai.ScreenAnalyzer
-import com.personalai.bridge.decision.DecisionEngine
 
 class BridgeAccessibilityService :
     AccessibilityService() {
@@ -21,15 +20,13 @@ class BridgeAccessibilityService :
 
         fun globalBack(): Boolean {
             return instance?.performGlobalAction(
-                AccessibilityService
-                    .GLOBAL_ACTION_BACK
+                AccessibilityService.GLOBAL_ACTION_BACK
             ) ?: false
         }
 
         fun globalHome(): Boolean {
             return instance?.performGlobalAction(
-                AccessibilityService
-                    .GLOBAL_ACTION_HOME
+                AccessibilityService.GLOBAL_ACTION_HOME
             ) ?: false
         }
     }
@@ -60,10 +57,6 @@ class BridgeAccessibilityService :
             packageName ==
             applicationContext.packageName
         ) {
-            Log.d(
-                TAG,
-                "Ignoring PersonalAI app event"
-            )
             return
         }
 
@@ -73,17 +66,25 @@ class BridgeAccessibilityService :
 
         Log.d(
             TAG,
-            "Processing: $packageName"
+            "Observing: $packageName"
         )
 
         ScreenAnalyzer.analyze(root)
 
-        DecisionEngine.decide(
-            packageName = packageName,
-            screenInfo =
-                buildScreenInfo(root),
-            targetNode = root
+        val screenText =
+            buildScreenInfo(root)
+
+        Log.d(
+            TAG,
+            "Screen: $screenText"
         )
+
+        /*
+         * SAFE MODE:
+         * Accessibility only observes.
+         * No automatic click, type,
+         * back or home action is allowed.
+         */
     }
 
     private fun buildScreenInfo(
